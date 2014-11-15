@@ -143,6 +143,8 @@ class Client():
 		def recv_msg_symm(sock):
 			while True:
 				data, addr = sock.recvfrom(1024)
+				if isinstance(data, bytes):
+					data = data.decode()
 				if addr == self.master:
 					sys.stdout.write(data)
 		Thread(target=send_msg_symm, args=(self.sockfd,)).start()
