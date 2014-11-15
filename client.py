@@ -50,7 +50,13 @@ class Client():
 			self.sockfd.sendto((self.pool + ' {0}'.format(nat_type_id)).encode(), self.master)
 		data, addr = self.sockfd.recvfrom(len(self.pool) + 3)
 		if isinstance(data, bytes):
-			data = data.decode()
+			try:
+				data = data.decode()
+			except:
+				try:
+					data = data.decode("GBK")
+				except:
+					data = data.decode("UTF-8")
 		if data != "ok " + self.pool:
 			print(sys.stderr, "unable to request!")
 			sys.exit(1)
@@ -88,7 +94,13 @@ class Client():
 				data, addr = sock.recvfrom(1024)
 				if addr == self.target or addr == self.master:
 					if isinstance(data, bytes):
-						data = data.decode()
+						try:
+							data = data.decode()
+						except:
+							try:
+								data = data.decode("GBK")
+							except:
+								data = data.decode("UTF-8")
 					sys.stdout.write(data)
 					if data == "punching...\n":	 # peer是restrict
 						try:
@@ -144,7 +156,13 @@ class Client():
 			while True:
 				data, addr = sock.recvfrom(1024)
 				if isinstance(data, bytes):
-					data = data.decode()
+					try:
+						data = data.decode()
+					except:
+						try:
+							data = data.decode("GBK")
+						except:
+							data = data.decode("UTF-8")
 				if addr == self.master:
 					sys.stdout.write(data)
 		Thread(target=send_msg_symm, args=(self.sockfd,)).start()

@@ -53,12 +53,19 @@ def main():
 	ClientInfo = namedtuple("ClientInfo", "addr, nat_type_id")
 	while True:
 		data, addr = sockfd.recvfrom(1024)
+		src_data = data
 		if isinstance(data, bytes):
-			data = data.decode()
+			try:
+				data = data.decode()
+			except:
+				try:
+					data = data.decode("GBK")
+				except:
+					data = data.decode("UTF-8")				
 		if data.startswith("msg "):
 			# forward symmetric chat msg, act as TURN server
 			try:
-				sockfd.sendto(data[4:].encode(), symmetric_chat_clients[addr])
+				sockfd.sendto(src_data[4:], symmetric_chat_clients[addr])
 				print("msg successfully forwarded to {0}".format(symmetric_chat_clients[addr]))
 				print(data[4:])
 			except KeyError:
@@ -74,7 +81,13 @@ def main():
 			print("pool={0}, nat_type={1}, ok sent to client".format(pool, NATTYPE[int(nat_type_id)]))
 			data, addr = sockfd.recvfrom(2)
 			if isinstance(data, bytes):
-				data = data.decode()
+				try:
+					data = data.decode()
+				except:
+					try:
+						data = data.decode("GBK")
+					except:
+						data = data.decode("UTF-8")
 			if data != "ok":
 				continue
 
